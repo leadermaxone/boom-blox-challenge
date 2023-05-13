@@ -1,7 +1,7 @@
 # boom-blox-challenge
 
 Welcome to the boom blox code challenge.
-My name is Massimo Bortolamei and I have developed the following application in accordance with the rules.
+I have developed the following application in accordance with the established requirements.
 
 Instructions
 
