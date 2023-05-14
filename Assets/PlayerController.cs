@@ -39,9 +39,6 @@ public class PlayerController : MonoBehaviour
     Vector2 mousePositionDelta;
     Vector2 scrollDelta;
     Quaternion newRotation;
-    Vector2 currentRightHandPositionV2;
-    Vector2 lastRightHandPositionV2;
-    Vector2 RightHandPositionV2delta;
 
     private float xRotation = 0.0f;
     private float yRotation = 0.0f;
@@ -89,6 +86,7 @@ public class PlayerController : MonoBehaviour
 
         if(isVR)
         {
+            // Move UI to right controller when in VR, with custom measures
             canvasUI.renderMode = RenderMode.WorldSpace;
             canvasUI.transform.SetParent(rightHand.transform, false);
             var rect = canvasUI.GetComponent<RectTransform>();
