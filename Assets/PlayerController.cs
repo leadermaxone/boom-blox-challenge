@@ -5,6 +5,10 @@ using UnityEngine.InputSystem.HID;
 
 public class PlayerController : MonoBehaviour
 {
+    public GameObject leftHand;
+    public GameObject rightHand;
+    public GameObject cameraOffset;
+
     public InputActionAsset InputActionMap;
     public InputActionReference ResetAction;
     public InputActionReference FireAction;
@@ -52,9 +56,46 @@ public class PlayerController : MonoBehaviour
     private float bulletVelocityBooster;
     private float bulletVelocityBoosterMax = 2.0f;
     private Coroutine boosterCoroutine;
+    [SerializeField]
+    public Canvas canvasUI;
+
+    public bool isVR = false;
+
+    private void Awake()
+    {
+        if (UnityEngine.XR.XRSettings.loadedDeviceName != "")
+        {
+            Debug.Log("VR ENABLED");
+            isVR = true;
+        }
+        else
+        {
+            Debug.Log("VR disabled");
+            isVR = false;
+        }
+    }
 
     void Start()
     {
+
+     
+
+        if(isVR)
+        {
+            canvasUI.renderMode = RenderMode.ScreenSpaceCamera;
+            canvasUI.worldCamera = Camera.main;
+
+            leftHand.SetActive(true);
+            rightHand.SetActive(true);
+        }
+        else
+        {
+            canvasUI.renderMode = RenderMode.ScreenSpaceOverlay;
+
+            leftHand.SetActive(false); 
+            rightHand.SetActive(false);
+        }
+
         InputActionMap.Enable();
         mainCamera = Camera.main;
         defaultCursorMode = CursorMode.Auto;
@@ -73,7 +114,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void OnDragStarted(InputAction.CallbackContext context)
-    {   
+    {
         Cursor.SetCursor(cursorOrbitTexture, cursorOrbitHotspot, defaultCursorMode);
         isDragging = true;
     }
@@ -96,14 +137,14 @@ public class PlayerController : MonoBehaviour
 
     private void OnScrollPerformed(InputAction.CallbackContext context)
     {
-        cameraLocalPosition = mainCamera.transform.localPosition;
+        cameraLocalPosition = cameraOffset.transform.localPosition;
         scrollDelta = context.ReadValue<Vector2>();
 
         zDelta = (scrollDelta.y * scrollSensitivity);
         zPosition = cameraLocalPosition.z + zDelta;
         zPosition = Mathf.Clamp(zPosition, maxOrbitDistance, minOrbitDistance);
         newCameraLocalPosition = new Vector3(cameraLocalPosition.x, cameraLocalPosition.y, zPosition);
-        mainCamera.transform.localPosition = newCameraLocalPosition;
+        cameraOffset.transform.localPosition = newCameraLocalPosition;
     }
 
     private void OnFireStarted(InputAction.CallbackContext context)
