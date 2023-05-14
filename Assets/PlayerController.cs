@@ -12,12 +12,15 @@ public class PlayerController : MonoBehaviour
     public InputActionAsset InputActionMap;
     public InputActionReference ResetAction;
     public InputActionReference FireAction;
-    public InputActionReference DragAction;
+    public InputActionReference RightClickAction;
     public InputActionReference MousePositionAction;
     public InputActionReference MousePositionDeltaAction;
-    public InputActionReference ScrollAction;
+    public InputActionReference ScrollWheel;
+    public InputActionReference ThumbStickAction;
+    public InputActionReference GripAction;
 
-    private bool isDragging = false;
+    private bool isOrbiting = false;
+    private bool isZooming = false;
 
     public Texture2D cursorMainTexture;
     public Texture2D cursorOrbitTexture;
@@ -36,6 +39,9 @@ public class PlayerController : MonoBehaviour
     Vector2 mousePositionDelta;
     Vector2 scrollDelta;
     Quaternion newRotation;
+    Vector2 currentRightHandPositionV2;
+    Vector2 lastRightHandPositionV2;
+    Vector2 RightHandPositionV2delta;
 
     private float xRotation = 0.0f;
     private float yRotation = 0.0f;
@@ -78,15 +84,26 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
 
+        mainCamera = Camera.main;
      
 
         if(isVR)
         {
-            canvasUI.renderMode = RenderMode.ScreenSpaceCamera;
-            canvasUI.worldCamera = Camera.main;
+            canvasUI.renderMode = RenderMode.WorldSpace;
+            canvasUI.transform.SetParent(rightHand.transform, false);
+            var rect = canvasUI.GetComponent<RectTransform>();
+            rect.sizeDelta = new Vector2(450, 300);
+            rect.pivot = new Vector2(0,0);
+            canvasUI.transform.localPosition = Vector3.zero;
+            canvasUI.transform.localScale = new Vector3(0.0007f, 0.0007f, 0.0007f);
 
-            leftHand.SetActive(true);
+            leftHand.SetActive(false);
             rightHand.SetActive(true);
+
+            CannonHolder.SetParent(rightHand.transform, false);
+
+            orbitSensitivity = 0.5f;
+            scrollSensitivity = 0.05f;
         }
         else
         {
@@ -97,48 +114,120 @@ public class PlayerController : MonoBehaviour
         }
 
         InputActionMap.Enable();
-        mainCamera = Camera.main;
         defaultCursorMode = CursorMode.Auto;
         cursorMainHotspot = new Vector2(cursorMainTexture.width / 2, cursorMainTexture.height / 2);
         cursorOrbitHotspot = new Vector2(cursorOrbitTexture.width / 2, cursorOrbitTexture.height / 2);
         Cursor.SetCursor(cursorMainTexture, cursorMainHotspot, defaultCursorMode);
 
-        DragAction.action.started += OnDragStarted;
-        DragAction.action.canceled += OnDragReleased;
+        RightClickAction.action.started += OnRightClickStarted;
+        RightClickAction.action.canceled += OnRightClickReleased;
 
-        ScrollAction.action.performed += OnScrollPerformed;
+        ThumbStickAction.action.started += OnThumbStickStarted;
+        ThumbStickAction.action.canceled += OnThumbStickCanceled; 
+        
+        GripAction.action.started += OnGripStarted;
+        GripAction.action.canceled += OnGripReleased;
+
+        ScrollWheel.action.started += OnScrollWheelStarted;
+        ScrollWheel.action.canceled += OnScrollWheelReleased;
+
         ResetAction.action.performed += OnResetPerformed;
 
         FireAction.action.started += OnFireStarted;
         FireAction.action.canceled += OnFireReleased;
     }
 
-    private void OnDragStarted(InputAction.CallbackContext context)
+    private void OnRightClickStarted(InputAction.CallbackContext context)
     {
-        Cursor.SetCursor(cursorOrbitTexture, cursorOrbitHotspot, defaultCursorMode);
-        isDragging = true;
+        if (!isZooming)
+        {
+            Cursor.SetCursor(cursorOrbitTexture, cursorOrbitHotspot, defaultCursorMode);
+            isOrbiting = true;
+        }
     }
-    private void Drag()
+    private void OnRightClickReleased(InputAction.CallbackContext context) 
     {
-        mousePositionDelta = MousePositionDeltaAction.action.ReadValue<Vector2>();
-
-        yRotation += mousePositionDelta.x * orbitSensitivity;
-        xRotation -= mousePositionDelta.y * orbitSensitivity;
-        xRotation = Mathf.Clamp(xRotation, 0, maxRotationX);
-
-        newRotation = Quaternion.Euler(xRotation, yRotation, 0);
-        transform.rotation = newRotation;
+        if (!isZooming)
+        {
+            Cursor.SetCursor(cursorMainTexture, cursorMainHotspot, CursorMode.Auto);
+            isOrbiting = false;
+        }
+    }    
+    private void OnThumbStickStarted(InputAction.CallbackContext context) 
+    {
+        if(!isZooming)
+        {
+            isOrbiting = true;
+        }
     }
-    private void OnDragReleased(InputAction.CallbackContext context) 
+    private void OnThumbStickCanceled(InputAction.CallbackContext context) 
     {
-        Cursor.SetCursor(cursorMainTexture, cursorMainHotspot, CursorMode.Auto);
-        isDragging = false;
+        if (!isZooming)
+        {
+            isOrbiting = false;
+        }
+    }
+    private void OnGripStarted(InputAction.CallbackContext context)
+    {
+        if(!isOrbiting)
+        {
+            isZooming = true;
+        }
+    }
+    private void OnGripReleased(InputAction.CallbackContext context) 
+    {
+        if (!isOrbiting)
+        {
+            isZooming = false;
+        }
+    }
+    private void OnScrollWheelStarted(InputAction.CallbackContext context)
+    {
+        if (!isOrbiting)
+        {
+            isZooming = true;
+        }
+    }
+    private void OnScrollWheelReleased(InputAction.CallbackContext context)
+    {
+        if (!isOrbiting)
+        {
+            isZooming = false;
+        }
+    }
+    private void Orbit()
+    {
+        if(isVR)
+        {
+            mousePositionDelta = ThumbStickAction.action.ReadValue<Vector2>();
+            xRotation += mousePositionDelta.y * orbitSensitivity;
+            yRotation -= mousePositionDelta.x * orbitSensitivity;
+        }
+        else
+        {
+            mousePositionDelta = MousePositionDeltaAction.action.ReadValue<Vector2>();
+            xRotation -= mousePositionDelta.y * orbitSensitivity; 
+            yRotation += mousePositionDelta.x * orbitSensitivity;
+        }
+            xRotation = Mathf.Clamp(xRotation, 0, maxRotationX);
+
+            newRotation = Quaternion.Euler(xRotation, yRotation, 0);
+            transform.rotation = newRotation;
+
     }
 
-    private void OnScrollPerformed(InputAction.CallbackContext context)
+    private void Zoom()
     {
+
         cameraLocalPosition = cameraOffset.transform.localPosition;
-        scrollDelta = context.ReadValue<Vector2>();
+        if(isVR)
+        {
+            scrollDelta = ThumbStickAction.action.ReadValue<Vector2>();
+        }
+        else
+        {
+            scrollDelta = ScrollWheel.action.ReadValue<Vector2>();
+        }
 
         zDelta = (scrollDelta.y * scrollSensitivity);
         zPosition = cameraLocalPosition.z + zDelta;
@@ -154,7 +243,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnFireReleased(InputAction.CallbackContext context) 
     {
-        if(boosterCoroutine != null)
+        if (boosterCoroutine != null)
         {
             StopCoroutine(boosterCoroutine);
         }
@@ -185,14 +274,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
     void Update()
     {
-        MoveTurret();
-        if(isDragging) 
+        if(!isVR)
         {
-            Drag();
+            MoveTurret();
+        }
+        if(isOrbiting) 
+        {
+            Orbit();
         }   
+        if(isZooming)
+        {
+            Zoom();
+        }
     }
 
     private IEnumerator ChargeBulletVelocityBooster()

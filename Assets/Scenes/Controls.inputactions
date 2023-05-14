@@ -24,7 +24,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Drag",
+                    "name": "RightClick",
                     "type": "Button",
                     "id": "dcc2e60a-bb75-451c-a963-0de4b780b3cb",
                     "expectedControlType": "Button",
@@ -51,7 +51,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Scroll",
+                    "name": "ScrollWheel",
                     "type": "Value",
                     "id": "1cdba567-b241-4e99-a467-c76160675b4d",
                     "expectedControlType": "Vector2",
@@ -60,13 +60,22 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "RightHandPosition",
+                    "name": "ThumbStick",
                     "type": "Value",
-                    "id": "367687f2-3bcc-4a13-80e1-bfdc7ab904fb",
-                    "expectedControlType": "Vector3",
+                    "id": "90d3fe10-e0bd-4afc-b343-da9276646f41",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Grip",
+                    "type": "Button",
+                    "id": "bfd13f27-e13c-4ddb-8a19-fa0b98b75053",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -74,6 +83,17 @@
                     "name": "",
                     "id": "ef824232-5fb3-4911-b448-0e7fe922b9bd",
                     "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reset",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0e28a50b-26a9-4683-856a-3c64aaa3bc67",
+                    "path": "<XRController>{RightHand}/secondaryButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -94,12 +114,23 @@
                 },
                 {
                     "name": "",
+                    "id": "df82ad3c-3f62-472d-84d6-33b30c31ee6a",
+                    "path": "<XRController>{RightHand}/triggerPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "f7f41ae4-0610-497c-b55e-6604b2bfffce",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Drag",
+                    "action": "RightClick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -132,18 +163,29 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Scroll",
+                    "action": "ScrollWheel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "63d34a43-4ad6-4be7-8145-d08c851eff1a",
-                    "path": "<XRController>{RightHand}/devicePosition",
+                    "id": "fab9dbb2-4902-4966-afc2-1f25c1f6aa22",
+                    "path": "<XRController>{RightHand}/thumbstick",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "RightHandPosition",
+                    "action": "ThumbStick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "769f015b-e5bf-4fa9-9349-9c108210b18d",
+                    "path": "<XRController>{RightHand}/gripButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Grip",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

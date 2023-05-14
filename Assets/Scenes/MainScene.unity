@@ -4376,10 +4376,12 @@ MonoBehaviour:
   InputActionMap: {fileID: -944628639613478452, guid: 9ae59376857e15244873a5f4974e2861, type: 3}
   ResetAction: {fileID: -1012650163239079391, guid: 9ae59376857e15244873a5f4974e2861, type: 3}
   FireAction: {fileID: 5107593709206093467, guid: 9ae59376857e15244873a5f4974e2861, type: 3}
-  DragAction: {fileID: -8063762853212196359, guid: 9ae59376857e15244873a5f4974e2861, type: 3}
+  RightClickAction: {fileID: -8063762853212196359, guid: 9ae59376857e15244873a5f4974e2861, type: 3}
   MousePositionAction: {fileID: 272564544524365635, guid: 9ae59376857e15244873a5f4974e2861, type: 3}
   MousePositionDeltaAction: {fileID: 9117107017997665257, guid: 9ae59376857e15244873a5f4974e2861, type: 3}
-  ScrollAction: {fileID: -3280118067435558058, guid: 9ae59376857e15244873a5f4974e2861, type: 3}
+  ScrollWheel: {fileID: -3280118067435558058, guid: 9ae59376857e15244873a5f4974e2861, type: 3}
+  ThumbStickAction: {fileID: -3405808117491050803, guid: 9ae59376857e15244873a5f4974e2861, type: 3}
+  GripAction: {fileID: -840877460456019203, guid: 9ae59376857e15244873a5f4974e2861, type: 3}
   cursorMainTexture: {fileID: 2800000, guid: e1c0221e202632049b21982d5ba9d4f9, type: 3}
   cursorOrbitTexture: {fileID: 2800000, guid: 4b538f70a28728a4ab8d746eb7a1dc41, type: 3}
   orbitDistance: 7
